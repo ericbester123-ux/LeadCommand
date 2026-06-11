@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #050505;
+  color: #ffffff;
+}
+
+::selection {
+  background: rgba(212, 175, 55, 0.35);
+}
+
+.gold-glow {
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.12);
+}
