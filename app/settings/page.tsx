@@ -20,7 +20,7 @@ const statusStyles = {
 export default function SettingsPage() {
   if (!isAdmin) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background p-4">
+      <main className="safe-bottom safe-top flex min-h-screen items-center justify-center bg-background p-4">
         <section className="w-full max-w-lg rounded-lg border border-white/10 bg-card p-6 text-center shadow-gold">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-red-300/30 bg-red-400/10 text-red-100">
             <Lock size={22} />
@@ -32,7 +32,7 @@ export default function SettingsPage() {
             Settings and integrations are only visible to Estates Elevate admins.
           </p>
           <Link
-            className="mt-6 inline-flex rounded-lg bg-gold px-4 py-3 font-semibold text-black transition hover:bg-gold-hover"
+            className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-gold px-4 py-3 font-semibold text-black transition hover:bg-gold-hover"
             href="/"
           >
             Back to Dashboard
@@ -43,12 +43,12 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.16),transparent_34%),#050505] p-4 md:p-8">
+    <main className="safe-bottom safe-top min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.16),transparent_34%),#050505] p-4 md:p-8">
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="flex flex-col justify-between gap-4 border-b border-white/10 pb-6 md:flex-row md:items-center">
           <div>
             <Link
-              className="inline-flex items-center gap-2 text-sm text-muted transition hover:text-gold-hover"
+              className="inline-flex min-h-11 items-center gap-2 text-sm text-muted transition hover:text-gold-hover"
               href="/"
             >
               <ArrowLeft size={16} />
@@ -60,7 +60,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <p className="text-sm text-muted">Admin only</p>
-                <h1 className="text-3xl font-semibold text-white">
+                <h1 className="text-2xl font-semibold text-white sm:text-3xl">
                   Integration Settings
                 </h1>
               </div>
@@ -140,7 +140,7 @@ export default function SettingsPage() {
                 <p className="mt-4 text-sm leading-6 text-muted">
                   {integration.description}
                 </p>
-                <button className="mt-5 rounded-lg border border-gold/30 px-4 py-2 text-sm font-medium text-gold-hover transition hover:bg-gold/10">
+                <button className="mt-5 min-h-11 rounded-lg border border-gold/30 px-4 py-2 text-sm font-medium text-gold-hover transition hover:bg-gold/10">
                   Configure
                 </button>
               </article>
