@@ -7,20 +7,26 @@ import {
   LineChart,
   Menu,
   PhoneCall,
+  Settings,
   Users
 } from "lucide-react";
 import { CampaignCharts } from "@/components/dashboard-charts";
 import { LeadsTable } from "@/components/leads-table";
 import { StatCard } from "@/components/stat-card";
+import { isAdmin } from "@/lib/current-user";
 import { appointments, leads } from "@/lib/data";
 
 const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard },
-  { label: "Leads", icon: Users },
-  { label: "AI Calls", icon: Bot },
-  { label: "Appointments", icon: CalendarCheck },
-  { label: "Reports", icon: LineChart }
+  { label: "Dashboard", icon: LayoutDashboard, href: "/" },
+  { label: "Leads", icon: Users, href: "#" },
+  { label: "AI Calls", icon: Bot, href: "#" },
+  { label: "Appointments", icon: CalendarCheck, href: "#" },
+  { label: "Reports", icon: LineChart, href: "#" }
 ];
+
+const adminNavItems = isAdmin
+  ? [{ label: "Settings", icon: Settings, href: "/settings" }]
+  : [];
 
 export default function DashboardPage() {
   const hotLeads = leads.filter((lead) => lead.status === "Hot").length;
@@ -40,10 +46,10 @@ export default function DashboardPage() {
             </h1>
           </div>
           <nav className="space-y-2">
-            {navItems.map((item, index) => (
+            {[...navItems, ...adminNavItems].map((item, index) => (
               <a
                 key={item.label}
-                href="#"
+                href={item.href}
                 className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm transition ${
                   index === 0
                     ? "bg-gold text-black"
