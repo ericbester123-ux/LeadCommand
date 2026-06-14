@@ -1,21 +1,7 @@
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Bot,
-  CheckCircle2,
-  KeyRound,
-  Lock,
-  Settings,
-  ShieldCheck
-} from "lucide-react";
-import { integrations } from "@/lib/integrations";
+import { ArrowLeft, Bot, KeyRound, Lock, Settings, ShieldCheck } from "lucide-react";
+import { IntegrationSettings } from "@/components/integration-settings";
 import { currentUser, isAdmin } from "@/lib/current-user";
-
-const statusStyles = {
-  Connected: "border-emerald-300/30 bg-emerald-400/10 text-emerald-100",
-  "Needs Setup": "border-gold/40 bg-gold/15 text-gold-hover",
-  Optional: "border-white/15 bg-white/5 text-muted"
-};
 
 export default function SettingsPage() {
   if (!isAdmin) {
@@ -88,128 +74,23 @@ export default function SettingsPage() {
               API Credentials
             </h2>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Store sensitive tokens in environment variables or secure database
-              records, never in client-facing code.
+              Save credentials server-side. Never expose service keys in
+              client-facing code.
             </p>
           </div>
           <div className="rounded-lg border border-white/10 bg-card p-5 shadow-gold">
             <Bot className="text-gold" size={24} />
             <h2 className="mt-4 text-lg font-semibold text-white">
-              AI Caller Setup
+              Retell Through GHL
             </h2>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Connect Retell call outcomes to GHL contacts and LeadCommand call
-              summaries.
+              If Retell already calls and updates GHL, LeadCommand only needs
+              GHL data. Direct Retell is optional.
             </p>
           </div>
         </section>
 
-        <section className="rounded-lg border border-white/10 bg-card">
-          <div className="border-b border-white/10 p-5">
-            <h2 className="text-lg font-semibold text-white">Integrations</h2>
-            <p className="text-sm text-muted">
-              Configure the systems that power LeadCommand behind the scenes.
-            </p>
-          </div>
-          <div className="grid gap-4 p-5 lg:grid-cols-2">
-            {integrations.map((integration) => (
-              <article
-                className="rounded-lg border border-white/10 bg-white/[0.03] p-5 transition hover:border-gold/35"
-                key={integration.name}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg border border-gold/25 bg-gold/10 p-3 text-gold">
-                      <integration.icon size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white">
-                        {integration.name}
-                      </h3>
-                      <span
-                        className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-medium ${statusStyles[integration.status]}`}
-                      >
-                        {integration.status}
-                      </span>
-                    </div>
-                  </div>
-                  {integration.status === "Connected" ? (
-                    <CheckCircle2 className="text-emerald-200" size={20} />
-                  ) : null}
-                </div>
-                <p className="mt-4 text-sm leading-6 text-muted">
-                  {integration.description}
-                </p>
-                <a
-                  className="mt-5 inline-flex min-h-11 items-center rounded-lg border border-gold/30 px-4 py-2 text-sm font-medium text-gold-hover transition hover:bg-gold/10"
-                  href={`#${integration.slug}`}
-                >
-                  Configure
-                </a>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="rounded-lg border border-white/10 bg-card">
-          <div className="border-b border-white/10 p-5">
-            <h2 className="text-lg font-semibold text-white">
-              Configure Integrations
-            </h2>
-            <p className="text-sm text-muted">
-              Add the credentials and IDs needed to connect each system. In
-              production, sensitive values should be saved securely on the
-              server or in environment variables.
-            </p>
-          </div>
-          <div className="grid gap-4 p-5 xl:grid-cols-2">
-            {integrations.map((integration) => (
-              <form
-                className="scroll-mt-28 rounded-lg border border-white/10 bg-white/[0.03] p-5"
-                id={integration.slug}
-                key={integration.slug}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg border border-gold/25 bg-gold/10 p-3 text-gold">
-                    <integration.icon size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white">
-                      {integration.name}
-                    </h3>
-                    <p className="text-sm text-muted">{integration.status}</p>
-                  </div>
-                </div>
-                <div className="mt-5 space-y-4">
-                  {integration.fields.map((field) => (
-                    <label className="block text-sm text-muted" key={field}>
-                      {field}
-                      <input
-                        className="mt-2 min-h-11 w-full rounded-lg border border-white/10 bg-black px-4 py-3 text-white outline-none transition placeholder:text-muted/60 focus:border-gold"
-                        placeholder={`Enter ${field.toLowerCase()}`}
-                        type={field.toLowerCase().includes("key") || field.toLowerCase().includes("token") ? "password" : "text"}
-                      />
-                    </label>
-                  ))}
-                </div>
-                <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                  <button
-                    className="min-h-11 rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-black transition hover:bg-gold-hover"
-                    type="button"
-                  >
-                    Save Configuration
-                  </button>
-                  <button
-                    className="min-h-11 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-muted transition hover:border-gold/30 hover:text-gold-hover"
-                    type="button"
-                  >
-                    Test Connection
-                  </button>
-                </div>
-              </form>
-            ))}
-          </div>
-        </section>
+        <IntegrationSettings />
       </div>
     </main>
   );
