@@ -10,6 +10,7 @@ create table agents (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text not null,
   brokerage text,
+  role text not null default 'agent',
   created_at timestamptz not null default now()
 );
 
@@ -61,4 +62,13 @@ create table campaign_metrics (
   booked integer not null default 0,
   spend numeric(10, 2) not null default 0,
   created_at timestamptz not null default now()
+);
+
+create table integrations (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  status text not null default 'Needs Setup',
+  config jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
