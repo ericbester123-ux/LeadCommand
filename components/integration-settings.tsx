@@ -7,9 +7,12 @@ type FieldValues = Record<string, string>;
 
 const defaults: Record<string, FieldValues> = {
   gohighlevel: {
+    "Connection Mode": "Private Integration",
     "Location ID": "",
-    "API Key": "",
+    "Private Integration Access Token": "",
+    "API Version": "2021-07-28",
     "Webhook URL": "/api/webhooks/ghl",
+    "Webhook Secret": "",
     "Pipeline ID": "",
     "Calendar ID": ""
   },
@@ -17,7 +20,15 @@ const defaults: Record<string, FieldValues> = {
     "Connection Mode": "GHL Managed",
     "API Key": "",
     "Agent ID": "",
-    "Inbound Webhook URL": "/api/webhooks/retell"
+    "From Number": "",
+    "Inbound Webhook URL": "/api/webhooks/retell",
+    "Webhook Secret": ""
+  },
+  "meta-ads": {
+    "Connection Mode": "GHL Lead Forms"
+  },
+  "calendar-sync": {
+    "Connection Mode": "GHL Calendar"
   }
 };
 
@@ -29,7 +40,11 @@ const statusStyles = {
 
 function isSecretField(field: string) {
   const normalized = field.toLowerCase();
-  return normalized.includes("key") || normalized.includes("token");
+  return (
+    normalized.includes("key") ||
+    normalized.includes("token") ||
+    normalized.includes("secret")
+  );
 }
 
 export function IntegrationSettings() {
@@ -213,8 +228,27 @@ export function IntegrationSettings() {
                       }
                       value={values[activeIntegration.slug]?.[field] ?? ""}
                     >
-                      <option>GHL Managed</option>
-                      <option>Direct Retell API</option>
+                      {activeIntegration.slug === "retell-ai" ? (
+                        <>
+                          <option>GHL Managed</option>
+                          <option>Direct Retell API</option>
+                        </>
+                      ) : activeIntegration.slug === "gohighlevel" ? (
+                        <>
+                          <option>Private Integration</option>
+                          <option>OAuth App</option>
+                        </>
+                      ) : activeIntegration.slug === "meta-ads" ? (
+                        <>
+                          <option>GHL Lead Forms</option>
+                          <option>Direct Meta API</option>
+                        </>
+                      ) : (
+                        <>
+                          <option>GHL Calendar</option>
+                          <option>Manual Calendar Feed</option>
+                        </>
+                      )}
                     </select>
                   ) : (
                     <input
