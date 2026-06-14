@@ -10,13 +10,22 @@ function value(values: Record<string, string>, key: string, fallback?: string) {
 }
 
 async function testGoHighLevel(values: Record<string, string>) {
-  const apiKey = value(values, "API Key", process.env.GHL_API_KEY);
+  const apiKey = value(
+    values,
+    "Private Integration Access Token",
+    process.env.GHL_API_KEY
+  );
   const locationId = value(values, "Location ID", process.env.GHL_LOCATION_ID);
+  const apiVersion = value(
+    values,
+    "API Version",
+    process.env.GHL_API_VERSION ?? "2021-07-28"
+  );
 
   if (!apiKey || !locationId) {
     return {
       ok: false,
-      message: "Add a GHL API key and Location ID before testing."
+      message: "Add a GHL access token and Location ID before testing."
     };
   }
 
@@ -25,7 +34,7 @@ async function testGoHighLevel(values: Record<string, string>) {
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
-        Version: "2021-07-28",
+        Version: apiVersion,
         Accept: "application/json"
       },
       cache: "no-store"
@@ -35,7 +44,7 @@ async function testGoHighLevel(values: Record<string, string>) {
   if (!response.ok) {
     return {
       ok: false,
-      message: `GHL rejected the connection test with status ${response.status}. Check the API key, Location ID, and app permissions.`
+      message: `GHL rejected the connection test with status ${response.status}. Check the access token, Location ID, API version, and app permissions.`
     };
   }
 
