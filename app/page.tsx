@@ -32,6 +32,7 @@ export default function DashboardPage() {
   const hotLeads = leads.filter((lead) => lead.status === "Hot").length;
   const needsAgent = leads.filter((lead) => lead.status === "Needs Agent").length;
   const booked = leads.filter((lead) => lead.status === "Booked").length;
+  const allNavItems = [...navItems, ...adminNavItems];
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.16),transparent_34%),#050505]">
@@ -46,7 +47,7 @@ export default function DashboardPage() {
             </h1>
           </div>
           <nav className="space-y-2">
-            {[...navItems, ...adminNavItems].map((item, index) => (
+            {allNavItems.map((item, index) => (
               <a
                 key={item.label}
                 href={item.href}
@@ -71,22 +72,28 @@ export default function DashboardPage() {
           </div>
         </aside>
 
-        <section className="flex-1">
-          <header className="sticky top-0 z-20 border-b border-white/10 bg-background/90 px-4 py-4 backdrop-blur md:px-8">
+        <section className="flex-1 pb-28 lg:pb-0">
+          <header className="safe-top sticky top-0 z-20 border-b border-white/10 bg-background/90 px-4 py-4 backdrop-blur md:px-8">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <button className="rounded-lg border border-white/10 p-2 text-white lg:hidden">
+                <button
+                  aria-label="Open navigation"
+                  className="min-h-11 min-w-11 rounded-lg border border-white/10 p-2 text-white lg:hidden"
+                >
                   <Menu size={20} />
                 </button>
                 <div>
-                  <p className="text-sm text-muted">Command center</p>
-                  <h2 className="text-xl font-semibold text-white md:text-2xl">
+                  <p className="text-xs text-muted sm:text-sm">Command center</p>
+                  <h2 className="text-lg font-semibold text-white sm:text-xl md:text-2xl">
                     Today&apos;s Lead Performance
                   </h2>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="rounded-lg border border-white/10 p-2 text-muted transition hover:border-gold/40 hover:text-gold-hover">
+                <button
+                  aria-label="Notifications"
+                  className="min-h-11 min-w-11 rounded-lg border border-white/10 p-2 text-muted transition hover:border-gold/40 hover:text-gold-hover"
+                >
                   <Bell size={20} />
                 </button>
                 <div className="hidden rounded-lg border border-gold/25 bg-gold/10 px-4 py-2 text-sm text-gold-hover sm:block">
@@ -186,6 +193,25 @@ export default function DashboardPage() {
           </div>
         </section>
       </div>
+      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-background/95 px-3 py-2 backdrop-blur lg:hidden">
+        <div className="mx-auto flex max-w-xl gap-2 overflow-x-auto">
+          {allNavItems.map((item, index) => (
+            <a
+              aria-current={index === 0 ? "page" : undefined}
+              className={`flex min-h-12 min-w-[76px] flex-col items-center justify-center gap-1 rounded-lg px-3 text-xs font-medium transition ${
+                index === 0
+                  ? "bg-gold text-black"
+                  : "text-muted hover:bg-white/5 hover:text-gold-hover"
+              }`}
+              href={item.href}
+              key={item.label}
+            >
+              <item.icon size={18} />
+              <span>{item.label}</span>
+            </a>
+          ))}
+        </div>
+      </nav>
     </main>
   );
 }
