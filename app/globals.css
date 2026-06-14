@@ -14,6 +14,9 @@ body {
   margin: 0;
   background: #050505;
   color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  touch-action: manipulation;
 }
 
 ::selection {
@@ -22,4 +25,12 @@ body {
 
 .gold-glow {
   box-shadow: 0 0 40px rgba(212, 175, 55, 0.12);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
