@@ -104,9 +104,3 @@ export const campaignMetrics: CampaignMetric[] = [
   { name: "Sat", leads: 36, booked: 11, spend: 360 },
   { name: "Sun", leads: 29, booked: 8, spend: 310 }
 ];
-
-export const sourceBreakdown = [
-  { name: "Instagram", value: 44 },
-  { name: "Facebook", value: 38 },
-  { name: "Forms", value: 18 }
-];
