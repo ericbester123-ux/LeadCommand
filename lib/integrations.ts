@@ -4,6 +4,7 @@ import { Bot, CalendarCheck, Database, Megaphone, Workflow } from "lucide-react"
 export type IntegrationStatus = "Connected" | "Needs Setup" | "Optional";
 
 export type Integration = {
+  adminNote: string;
   name: string;
   description: string;
   slug: string;
@@ -17,24 +18,30 @@ export const integrations: Integration[] = [
     name: "GoHighLevel",
     description:
       "CRM backend for contacts, forms, pipelines, calendars, SMS, email, and workflows.",
+    adminNote:
+      "Connect GHL first. LeadCommand should read lead, pipeline, appointment, and workflow outcomes from GHL instead of replacing the CRM.",
     slug: "gohighlevel",
     status: "Connected",
     icon: Workflow,
-    fields: ["Location ID", "API Key", "Webhook URL", "Pipeline ID"]
+    fields: ["Location ID", "API Key", "Webhook URL", "Pipeline ID", "Calendar ID"]
   },
   {
     name: "Retell AI",
     description:
-      "AI caller used for lead qualification, call summaries, transcripts, and booking intent.",
+      "Optional direct connection for raw call events. Most setups can keep Retell managed through GHL.",
+    adminNote:
+      "Retell is optional here if calls are already triggered and logged through GHL. Use Direct Retell API only when LeadCommand needs raw Retell webhooks or transcript data.",
     slug: "retell-ai",
-    status: "Needs Setup",
+    status: "Optional",
     icon: Bot,
-    fields: ["API Key", "Agent ID", "Inbound Webhook URL", "Booking Outcome Tag"]
+    fields: ["Connection Mode", "API Key", "Agent ID", "Inbound Webhook URL"]
   },
   {
     name: "Meta Ads",
     description:
       "Facebook and Instagram campaign source for lead volume, spend, and reporting.",
+    adminNote:
+      "Meta can stay connected through GHL lead forms at first. Add direct Meta settings later for richer campaign reporting.",
     slug: "meta-ads",
     status: "Needs Setup",
     icon: Megaphone,
@@ -44,6 +51,8 @@ export const integrations: Integration[] = [
     name: "Supabase",
     description:
       "Authentication, admin roles, client access, and LeadCommand reporting database.",
+    adminNote:
+      "Use Supabase for LeadCommand users, admin roles, reporting snapshots, and integration status records.",
     slug: "supabase",
     status: "Connected",
     icon: Database,
@@ -53,6 +62,8 @@ export const integrations: Integration[] = [
     name: "Calendar Sync",
     description:
       "Appointment sync from GHL calendars into the client dashboard.",
+    adminNote:
+      "Calendar sync should normally use the GHL calendar ID, so appointments stay managed inside the CRM.",
     slug: "calendar-sync",
     status: "Optional",
     icon: CalendarCheck,
