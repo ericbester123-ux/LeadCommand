@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   Bell,
   Bot,
@@ -41,7 +42,12 @@ export function AppShell({
   title
 }: AppShellProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
   const allNavItems = [...navItems, ...adminNavItems];
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.16),transparent_34%),#050505]">
@@ -86,14 +92,16 @@ export function AppShell({
         </aside>
 
         <section className="flex-1 pb-28 lg:pb-0">
-          <header className="safe-top sticky top-0 z-20 border-b border-white/10 bg-background/90 px-4 py-4 backdrop-blur md:px-8">
+          <header className="safe-top sticky top-0 z-40 border-b border-white/10 bg-background/90 px-4 py-4 backdrop-blur md:px-8">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <button
                   aria-expanded={mobileMenuOpen}
-                  aria-label="Open navigation"
-                  className="min-h-11 min-w-11 rounded-lg border border-white/10 p-2 text-white lg:hidden"
-                  onClick={() => setMobileMenuOpen(true)}
+                  aria-label={
+                    mobileMenuOpen ? "Close navigation" : "Open navigation"
+                  }
+                  className="relative z-50 min-h-11 min-w-11 rounded-lg border border-white/10 p-2 text-white lg:hidden"
+                  onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
                   type="button"
                 >
                   <Menu size={20} />
@@ -123,7 +131,7 @@ export function AppShell({
         </section>
       </div>
       {mobileMenuOpen ? (
-        <div className="fixed inset-0 z-40 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
           <button
             aria-label="Close navigation backdrop"
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
