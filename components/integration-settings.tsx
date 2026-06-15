@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { integrations } from "@/lib/integrations";
 
 type FieldValues = Record<string, string>;
@@ -48,6 +48,7 @@ function isSecretField(field: string) {
 }
 
 export function IntegrationSettings() {
+  const configuratorRef = useRef<HTMLElement>(null);
   const [activeSlug, setActiveSlug] = useState(integrations[0]?.slug ?? "");
   const [values, setValues] = useState<Record<string, FieldValues>>(() =>
     integrations.reduce<Record<string, FieldValues>>((acc, integration) => {
@@ -76,6 +77,18 @@ export function IntegrationSettings() {
         [field]: value
       }
     }));
+  }
+
+  function openConfigurator(slug: string) {
+    setActiveSlug(slug);
+
+    window.requestAnimationFrame(() => {
+      configuratorRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+      configuratorRef.current?.focus({ preventScroll: true });
+    });
   }
 
   async function runAction(slug: string, action: "save" | "test") {
@@ -144,7 +157,7 @@ export function IntegrationSettings() {
                   aria-controls="integration-configurator"
                   aria-expanded={active}
                   className="mt-5 min-h-11 rounded-lg border border-gold/30 px-4 py-2 text-sm font-medium text-gold-hover transition hover:bg-gold/10"
-                  onClick={() => setActiveSlug(integration.slug)}
+                  onClick={() => openConfigurator(integration.slug)}
                   type="button"
                 >
                   Configure
@@ -158,6 +171,8 @@ export function IntegrationSettings() {
       <section
         className="rounded-lg border border-white/10 bg-card"
         id="integration-configurator"
+        ref={configuratorRef}
+        tabIndex={-1}
       >
         <div className="border-b border-white/10 p-5">
           <h2 className="text-lg font-semibold text-white">
