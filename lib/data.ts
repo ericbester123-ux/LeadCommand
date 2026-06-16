@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { defaultClientProfile } from "@/lib/clients";
+import { clientProfiles, defaultClientProfile } from "@/lib/clients";
 import {
   mapAppointmentRow,
   mapCampaignMetricRow,
@@ -68,9 +68,10 @@ export async function resolveActiveClientIdForPage(
       .select("id")
       .order("created_at", { ascending: true });
 
-    const availableIds = (data ?? [])
-      .map((client) => client.id)
-      .filter(Boolean);
+    const availableIds = [
+      ...clientProfiles.map((client) => client.id),
+      ...(data ?? []).map((client) => client.id)
+    ].filter(Boolean);
 
     if (!availableIds.length) {
       return selectedClientId;

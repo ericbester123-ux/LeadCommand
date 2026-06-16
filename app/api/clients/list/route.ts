@@ -31,6 +31,15 @@ function mapClientRows(
   }));
 }
 
+function mergeDemoClients(clients: ReturnType<typeof mapClientRows>) {
+  const clientIds = new Set(clients.map((client) => client.id));
+  const missingDemoClients = clientProfiles.filter(
+    (client) => !clientIds.has(client.id)
+  );
+
+  return [...missingDemoClients, ...clients];
+}
+
 export async function GET() {
   const headers = {
     "Cache-Control": "no-store"
@@ -66,5 +75,8 @@ export async function GET() {
     );
   }
 
-  return NextResponse.json({ clients: mapClientRows(data) }, { headers });
+  return NextResponse.json(
+    { clients: mergeDemoClients(mapClientRows(data)) },
+    { headers }
+  );
 }

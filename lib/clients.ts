@@ -11,6 +11,16 @@ export type ClientProfile = {
 
 export const clientProfiles: ClientProfile[] = [
   {
+    id: "client-demo",
+    agentName: "Client Demo",
+    brokerage: "Estates Elevate",
+    locationName: "Client Demo Location",
+    ghlLocationId: "demo-location",
+    market: "Luxury Buyer & Seller Leads",
+    status: "Connected",
+    lastSync: "Demo data ready"
+  },
+  {
     id: "client-eric-trst",
     agentName: "Eric Trst",
     brokerage: "Estates Elevate",
