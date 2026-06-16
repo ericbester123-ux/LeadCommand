@@ -2,7 +2,7 @@ import { Bot, PhoneCall } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { StatCard } from "@/components/stat-card";
 import { getLeadCommandUser } from "@/lib/auth";
-import { getClientData, getSelectedClientId } from "@/lib/data";
+import { getClientData, resolveActiveClientIdForPage } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -16,11 +16,11 @@ export default async function AiCallerPage({
   searchParams
 }: AiCallerPageProps) {
   const user = await getLeadCommandUser();
-  const activeClientId = getSelectedClientId(
+  const activeClientId = await resolveActiveClientIdForPage(
     searchParams?.client,
     user?.isAdmin ? undefined : user?.clientIds
   );
-  const { leads } = getClientData(activeClientId);
+  const { leads } = await getClientData(activeClientId);
   const contacted = leads.filter((lead) => lead.status !== "New").length;
   const needsAgent = leads.filter((lead) => lead.status === "Needs Agent").length;
 

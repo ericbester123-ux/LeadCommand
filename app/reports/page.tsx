@@ -4,7 +4,7 @@ import { CampaignCharts } from "@/components/dashboard-charts";
 import { ReportPeriodFilter } from "@/components/report-period-filter";
 import { StatCard } from "@/components/stat-card";
 import { getLeadCommandUser } from "@/lib/auth";
-import { getClientData, getSelectedClientId } from "@/lib/data";
+import { getClientData, resolveActiveClientIdForPage } from "@/lib/data";
 import type { CampaignMetric } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -33,14 +33,14 @@ function getPeriodMetrics(items: CampaignMetric[], period?: string) {
 
 export default async function ReportsPage({ searchParams }: ReportsPageProps) {
   const user = await getLeadCommandUser();
-  const activeClientId = getSelectedClientId(
+  const activeClientId = await resolveActiveClientIdForPage(
     searchParams?.client,
     user?.isAdmin ? undefined : user?.clientIds
   );
   const period = ["day", "week", "month"].includes(searchParams?.period ?? "")
     ? searchParams?.period ?? "week"
     : "week";
-  const { campaignMetrics } = getClientData(activeClientId);
+  const { campaignMetrics } = await getClientData(activeClientId);
   const filteredMetrics = getPeriodMetrics(campaignMetrics, period);
   const totalLeads = filteredMetrics.reduce((sum, day) => sum + day.leads, 0);
   const totalBooked = filteredMetrics.reduce((sum, day) => sum + day.booked, 0);

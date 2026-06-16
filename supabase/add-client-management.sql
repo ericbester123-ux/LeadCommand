@@ -33,7 +33,5 @@ alter table campaign_metrics
 
 insert into clients (name, brokerage, location_name, ghl_location_id, market, status)
 values
-  ('Estates Elevate Demo', 'Estates Elevate', 'Main Demo Location', 'demo-location', 'Los Angeles', 'Connected'),
-  ('Westside Realty Team', 'Westside Realty', 'Buyer Leads - Westside', null, 'Santa Monica', 'Needs Setup'),
-  ('Luxury Listings Group', 'Luxury Listings Group', 'Seller Campaigns', null, 'Beverly Hills', 'Needs Setup')
+  ('Eric Trst', 'Estates Elevate', 'Eric Trst', null, null, 'Needs Setup')
 on conflict do nothing;

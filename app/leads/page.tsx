@@ -3,7 +3,7 @@ import { AppShell } from "@/components/app-shell";
 import { LeadsTable } from "@/components/leads-table";
 import { StatCard } from "@/components/stat-card";
 import { getLeadCommandUser } from "@/lib/auth";
-import { getClientData, getSelectedClientId } from "@/lib/data";
+import { getClientData, resolveActiveClientIdForPage } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +15,11 @@ type LeadsPageProps = {
 
 export default async function LeadsPage({ searchParams }: LeadsPageProps) {
   const user = await getLeadCommandUser();
-  const activeClientId = getSelectedClientId(
+  const activeClientId = await resolveActiveClientIdForPage(
     searchParams?.client,
     user?.isAdmin ? undefined : user?.clientIds
   );
-  const { leads } = getClientData(activeClientId);
+  const { leads } = await getClientData(activeClientId);
   const hotLeads = leads.filter((lead) => lead.status === "Hot").length;
   const needsAgent = leads.filter((lead) => lead.status === "Needs Agent").length;
   const booked = leads.filter((lead) => lead.status === "Booked").length;

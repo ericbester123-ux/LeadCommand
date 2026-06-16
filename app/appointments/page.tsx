@@ -2,7 +2,7 @@ import { CalendarCheck } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { StatCard } from "@/components/stat-card";
 import { getLeadCommandUser } from "@/lib/auth";
-import { getClientData, getSelectedClientId } from "@/lib/data";
+import { getClientData, resolveActiveClientIdForPage } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -16,11 +16,11 @@ export default async function AppointmentsPage({
   searchParams
 }: AppointmentsPageProps) {
   const user = await getLeadCommandUser();
-  const activeClientId = getSelectedClientId(
+  const activeClientId = await resolveActiveClientIdForPage(
     searchParams?.client,
     user?.isAdmin ? undefined : user?.clientIds
   );
-  const { appointments } = getClientData(activeClientId);
+  const { appointments } = await getClientData(activeClientId);
   const confirmed = appointments.filter(
     (appointment) => appointment.status === "Confirmed"
   ).length;

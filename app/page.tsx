@@ -4,7 +4,7 @@ import { CampaignCharts } from "@/components/dashboard-charts";
 import { LeadsTable } from "@/components/leads-table";
 import { StatCard } from "@/components/stat-card";
 import { getLeadCommandUser } from "@/lib/auth";
-import { getClientData, getSelectedClientId } from "@/lib/data";
+import { getClientData, getDashboardStats, resolveActiveClientIdForPage } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -18,14 +18,14 @@ export default async function DashboardPage({
   searchParams
 }: DashboardPageProps) {
   const user = await getLeadCommandUser();
-  const activeClientId = getSelectedClientId(
+  const activeClientId = await resolveActiveClientIdForPage(
     searchParams?.client,
     user?.isAdmin ? undefined : user?.clientIds
   );
-  const { appointments, campaignMetrics, leads } = getClientData(activeClientId);
-  const hotLeads = leads.filter((lead) => lead.status === "Hot").length;
-  const needsAgent = leads.filter((lead) => lead.status === "Needs Agent").length;
-  const booked = leads.filter((lead) => lead.status === "Booked").length;
+  const { appointments, campaignMetrics, leads } = await getClientData(
+    activeClientId
+  );
+  const stats = await getDashboardStats(activeClientId);
 
   return (
     <AppShell
@@ -37,26 +37,26 @@ export default async function DashboardPage({
             <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <StatCard
                 title="New Leads"
-                value="32"
-                detail="+18% from yesterday"
+                value={String(stats.newLeads)}
+                detail={`${stats.totalLeads} active in pipeline`}
                 icon={Users}
               />
               <StatCard
                 title="Hot Leads"
-                value={String(hotLeads)}
+                value={String(stats.hotLeads)}
                 detail="High intent based on AI call"
                 icon={Flame}
               />
               <StatCard
                 title="AI Calls Completed"
-                value="24"
+                value={String(stats.aiCallsCompleted)}
                 detail="AI call outcomes synced"
                 icon={PhoneCall}
               />
               <StatCard
                 title="Appointments"
-                value={String(booked + appointments.length)}
-                detail={`${needsAgent} lead needs agent action`}
+                value={String(stats.appointments)}
+                detail={`${stats.needsAgent} lead needs agent action`}
                 icon={CalendarCheck}
               />
             </section>

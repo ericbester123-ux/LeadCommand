@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft, Bot, KeyRound, Lock, Settings, ShieldCheck } from "lucide-react";
+import { ActiveClientProvider } from "@/components/active-client-provider";
 import { ClientManagement } from "@/components/client-management";
 import { ClientSwitcher } from "@/components/client-switcher";
 import { IntegrationSettings } from "@/components/integration-settings";
@@ -67,7 +68,9 @@ export default async function SettingsPage() {
             <div className="rounded-lg border border-gold/25 bg-gold/10 px-4 py-3 text-sm text-gold-hover">
               Signed in as {user.name}
             </div>
-            <ClientSwitcher />
+            <ActiveClientProvider>
+              <ClientSwitcher />
+            </ActiveClientProvider>
           </div>
         </header>
 

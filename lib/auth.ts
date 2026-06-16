@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 
 export type LeadCommandRole = "admin" | "agent";
 
@@ -31,6 +32,49 @@ function isConfiguredAdmin(email: string) {
     .includes(email.toLowerCase());
 }
 
+async function ensureAgentProfile(
+  userId: string,
+  fullName: string,
+  role: LeadCommandRole
+) {
+  const admin = getSupabaseAdminClient();
+  const payload = {
+    id: userId,
+    full_name: fullName,
+    role,
+    updated_at: new Date().toISOString()
+  };
+
+  if (admin) {
+    await admin.from("agents").upsert(payload, { onConflict: "id" });
+    return;
+  }
+
+  const supabase = createServerComponentClient({ cookies });
+  const { data: profile } = await supabase
+    .from("agents")
+    .select("full_name, role")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (profile) {
+    if (profile.role !== role) {
+      await supabase
+        .from("agents")
+        .update({ role, updated_at: payload.updated_at })
+        .eq("id", userId);
+    }
+
+    return;
+  }
+
+  await supabase.from("agents").insert({
+    id: userId,
+    full_name: fullName,
+    role: role === "admin" ? "agent" : role
+  });
+}
+
 export async function getLeadCommandUser(): Promise<LeadCommandUser | null> {
   const supabase = createServerComponentClient({ cookies });
   const {
@@ -46,12 +90,6 @@ export async function getLeadCommandUser(): Promise<LeadCommandUser | null> {
     session.user.user_metadata?.full_name ??
     session.user.user_metadata?.name ??
     getNameFromEmail(email);
-
-  const { data: profile } = await supabase
-    .from("agents")
-    .select("full_name, role")
-    .eq("id", session.user.id)
-    .maybeSingle();
   const role: LeadCommandRole = isConfiguredAdmin(email) ? "admin" : "agent";
   let clientIds: string[] = [];
 
@@ -66,35 +104,19 @@ export async function getLeadCommandUser(): Promise<LeadCommandUser | null> {
       .filter(Boolean);
   }
 
-  if (profile) {
-    if (profile.role !== role) {
-      await supabase
-        .from("agents")
-        .update({ role, updated_at: new Date().toISOString() })
-        .eq("id", session.user.id);
-    }
+  await ensureAgentProfile(session.user.id, fallbackName, role);
 
-    return {
-      id: session.user.id,
-      clientIds,
-      email,
-      name: profile.full_name ?? fallbackName,
-      role,
-      isAdmin: role === "admin"
-    };
-  }
-
-  await supabase.from("agents").insert({
-    id: session.user.id,
-    full_name: fallbackName,
-    role
-  });
+  const { data: profile } = await supabase
+    .from("agents")
+    .select("full_name, role")
+    .eq("id", session.user.id)
+    .maybeSingle();
 
   return {
     id: session.user.id,
     clientIds,
     email,
-    name: fallbackName,
+    name: profile?.full_name ?? fallbackName,
     role,
     isAdmin: role === "admin"
   };

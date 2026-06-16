@@ -13,6 +13,7 @@ import {
   Users,
   X
 } from "lucide-react";
+import { ActiveClientProvider } from "@/components/active-client-provider";
 import { ClientSwitcher } from "@/components/client-switcher";
 import { LocationLabel } from "@/components/location-label";
 import { NotificationMenu } from "@/components/notification-menu";
@@ -88,43 +89,45 @@ export function AppShell({
           </nav>
         </aside>
 
-        <section className="flex-1 pb-28 lg:pb-0">
-          <header className="safe-top sticky top-0 z-40 border-b border-white/10 bg-background/90 px-4 py-4 backdrop-blur md:px-8">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <button
-                  aria-expanded={mobileMenuOpen}
-                  aria-label={
-                    mobileMenuOpen ? "Close navigation" : "Open navigation"
-                  }
-                  className="relative z-50 min-h-11 min-w-11 rounded-lg border border-white/10 p-2 text-white lg:hidden"
-                  onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
-                  type="button"
-                >
-                  <Menu size={20} />
-                </button>
-                <div>
-                  <p className="text-xs text-muted sm:text-sm">{eyebrow}</p>
-                  <h2 className="text-lg font-semibold text-white sm:text-xl md:text-2xl">
-                    {title}
-                  </h2>
-                  <div className="mt-2">
-                    <LocationLabel clientId={activeClientId} />
+        <ActiveClientProvider serverClientId={activeClientId}>
+          <section className="flex-1 pb-28 lg:pb-0">
+            <header className="safe-top sticky top-0 z-40 border-b border-white/10 bg-background/90 px-4 py-4 backdrop-blur md:px-8">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <button
+                    aria-expanded={mobileMenuOpen}
+                    aria-label={
+                      mobileMenuOpen ? "Close navigation" : "Open navigation"
+                    }
+                    className="relative z-50 min-h-11 min-w-11 rounded-lg border border-white/10 p-2 text-white lg:hidden"
+                    onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
+                    type="button"
+                  >
+                    <Menu size={20} />
+                  </button>
+                  <div>
+                    <p className="text-xs text-muted sm:text-sm">{eyebrow}</p>
+                    <h2 className="text-lg font-semibold text-white sm:text-xl md:text-2xl">
+                      {title}
+                    </h2>
+                    <div className="mt-2">
+                      <LocationLabel />
+                    </div>
                   </div>
                 </div>
+                <div className="flex items-center gap-3">
+                  <NotificationMenu />
+                  {isAdminUser ? (
+                    <ClientSwitcher compact />
+                  ) : null}
+                  <SignOutButton />
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <NotificationMenu />
-                {isAdminUser ? (
-                  <ClientSwitcher activeClientId={activeClientId} compact />
-                ) : null}
-                <SignOutButton />
-              </div>
-            </div>
-          </header>
+            </header>
 
-          <div className="space-y-6 p-4 md:p-8">{children}</div>
-        </section>
+            <div className="space-y-6 p-4 md:p-8">{children}</div>
+          </section>
+        </ActiveClientProvider>
       </div>
       {mobileMenuOpen ? (
         <div className="fixed inset-0 z-50 lg:hidden">
