@@ -76,10 +76,27 @@ export function ActiveClientProvider({
     urlClientId
   ]);
 
-  const activeClient = useMemo(
-    () => resolveClientProfile(selectedClientId, availableClients),
-    [availableClients, selectedClientId]
-  );
+  const activeClient = useMemo(() => {
+    const resolvedClient = resolveClientProfile(
+      selectedClientId,
+      availableClients
+    );
+
+    if (
+      loading &&
+      selectedClientId !== defaultClientProfile.id &&
+      resolvedClient.id === defaultClientProfile.id
+    ) {
+      return {
+        ...defaultClientProfile,
+        id: selectedClientId,
+        agentName: "Loading location",
+        locationName: "Loading location..."
+      };
+    }
+
+    return resolvedClient;
+  }, [availableClients, loading, selectedClientId]);
 
   const selectClient = useCallback(
     (clientId: string) => {
@@ -105,12 +122,7 @@ export function ActiveClientProvider({
 
   return (
     <ActiveClientContext.Provider value={value}>
-      <div
-        className="contents"
-        style={{ visibility: loading ? "hidden" : "visible" }}
-      >
-        {children}
-      </div>
+      {children}
     </ActiveClientContext.Provider>
   );
 }
