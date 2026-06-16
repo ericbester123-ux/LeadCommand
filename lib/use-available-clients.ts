@@ -7,19 +7,24 @@ import { clientProfiles } from "@/lib/clients";
 export function useAvailableClients() {
   const [availableClients, setAvailableClients] =
     useState<ClientProfile[]>(clientProfiles);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadClients() {
-      const response = await fetch("/api/clients/list", { cache: "no-store" });
-      const result = (await response.json()) as { clients?: ClientProfile[] };
+      try {
+        const response = await fetch("/api/clients/list", { cache: "no-store" });
+        const result = (await response.json()) as { clients?: ClientProfile[] };
 
-      if (result.clients?.length) {
-        setAvailableClients(result.clients);
+        if (result.clients?.length) {
+          setAvailableClients(result.clients);
+        }
+      } finally {
+        setLoading(false);
       }
     }
 
     void loadClients();
   }, []);
 
-  return availableClients;
+  return { availableClients, loading };
 }

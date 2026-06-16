@@ -11,6 +11,7 @@ import {
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ClientProfile } from "@/lib/clients";
+import { defaultClientProfile } from "@/lib/clients";
 import {
   ACTIVE_CLIENT_STORAGE_KEY,
   resolveActiveClientId,
@@ -39,13 +40,17 @@ export function ActiveClientProvider({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const availableClients = useAvailableClients();
+  const { availableClients, loading } = useAvailableClients();
   const urlClientId = searchParams.get("client");
-  const [selectedClientId, setSelectedClientId] = useState(() =>
-    resolveActiveClientId(urlClientId, serverClientId, null, availableClients)
+  const [selectedClientId, setSelectedClientId] = useState(
+    () => urlClientId ?? serverClientId ?? defaultClientProfile.id
   );
 
   useEffect(() => {
+    if (loading) {
+      return;
+    }
+
     const savedClientId = window.localStorage.getItem(ACTIVE_CLIENT_STORAGE_KEY);
     const resolvedClientId = resolveActiveClientId(
       urlClientId,
@@ -63,6 +68,7 @@ export function ActiveClientProvider({
     }
   }, [
     availableClients,
+    loading,
     pathname,
     router,
     searchParams,
@@ -99,7 +105,12 @@ export function ActiveClientProvider({
 
   return (
     <ActiveClientContext.Provider value={value}>
-      {children}
+      <div
+        className="contents"
+        style={{ visibility: loading ? "hidden" : "visible" }}
+      >
+        {children}
+      </div>
     </ActiveClientContext.Provider>
   );
 }
