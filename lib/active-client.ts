@@ -15,16 +15,16 @@ export function resolveActiveClientId(
     return urlClientId;
   }
 
+  if (savedClientId && validClientIds.has(savedClientId)) {
+    return savedClientId;
+  }
+
   if (
     serverClientId &&
     serverClientId !== defaultClientProfile.id &&
     validClientIds.has(serverClientId)
   ) {
     return serverClientId;
-  }
-
-  if (savedClientId && validClientIds.has(savedClientId)) {
-    return savedClientId;
   }
 
   return availableClients[0]?.id ?? defaultClientProfile.id;

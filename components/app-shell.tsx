@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Bot,
   CalendarCheck,
@@ -46,10 +46,22 @@ export function AppShell({
 }: AppShellProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selectedClientParam = searchParams.get("client");
   const adminNavItems = isAdminUser
     ? [{ label: "Settings", icon: Settings, href: "/settings" }]
     : [];
   const allNavItems = [...navItems, ...adminNavItems];
+
+  function getNavigationHref(href: string) {
+    if (!selectedClientParam) {
+      return href;
+    }
+
+    const params = new URLSearchParams();
+    params.set("client", selectedClientParam);
+    return `${href}?${params.toString()}`;
+  }
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -78,7 +90,7 @@ export function AppShell({
                       ? "bg-gold text-black"
                       : "text-muted hover:bg-white/5 hover:text-gold-hover"
                   }`}
-                  href={item.href}
+                  href={getNavigationHref(item.href)}
                   key={item.label}
                 >
                   <item.icon size={18} />
@@ -167,7 +179,7 @@ export function AppShell({
                         ? "bg-gold text-black"
                         : "text-muted hover:bg-white/5 hover:text-gold-hover"
                     }`}
-                    href={item.href}
+                    href={getNavigationHref(item.href)}
                     key={item.label}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -192,7 +204,7 @@ export function AppShell({
                     ? "bg-gold text-black"
                     : "text-muted hover:bg-white/5 hover:text-gold-hover"
                 }`}
-                href={item.href}
+                href={getNavigationHref(item.href)}
                 key={item.label}
               >
                 <item.icon size={18} />
